@@ -2,6 +2,8 @@ const path = require('path')
 const glob = require('glob')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 const entries = getEntries('src/**/*.js')
 
@@ -10,18 +12,47 @@ const config = {
     module: {
         rules: [
             {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+            {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader'
-                }
+                loader: 'babel-loader'
+            },
+            {
+                test: /\.less$/,
+                use: [
+                    process.env.NODE_ENV !== 'production'
+                    ? 'vue-style-loader'
+                    : MiniCssExtractPlugin.loader,
+                    'vue-style-loader',
+                    'css-loader',
+                    'less-loader'
+                ]
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'vue-style-loader',
+                    'css-loader'
+                ]
             }
         ]
     },
-    plugins: [
+    resolve: {
+        alias: {
+            vue$: 'vue/dist/vue.esm.js'
+        }
+    },
+    plugins: [        
         new CleanWebpackPlugin(['../dist'], {
             root: __dirname,
             allowExternal: true
+        }),
+        new VueLoaderPlugin(),
+        new MiniCssExtractPlugin({
+            filename: 'style.css'
         })
     ],
     output: {

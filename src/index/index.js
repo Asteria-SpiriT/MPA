@@ -1,9 +1,13 @@
-function component() {
-    let ele = document.createElement('div')
+import Vue from 'vue'
+import App from './App.vue'
+// import axios from 'axios'
+import axios from '../../util/axiosPlugin'
 
-    ele.innerHTML = 'Hello, A little boy.'
+// Vue.prototype.$http = axios
+Vue.use(axios)
 
-    return ele
-}
-
-document.body.appendChild(component())
+new Vue({
+  el: '#app',
+  template: '<App/>',
+  components: { App }
+})
